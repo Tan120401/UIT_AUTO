@@ -1,4 +1,5 @@
 import codecs
+import os
 from time import sleep
 import subprocess
 
@@ -25,6 +26,29 @@ def write_log_setting(testcase_name,pass_list, fail_list):
             file.write("\n")
         else:
             result_of_testcase.append(f"-{testcase_name}: Pass")
+# Function init log file
+def init_log_file():
+    log_file = "setting_logs.txt"
+
+    # check setting log exists
+    if os.path.exists(log_file):
+        try:
+            # delete file
+            os.remove(log_file)
+            print(f"Deleted existing log file: {log_file}")
+        except Exception as e:
+            print(f"Error deleting log file: {e}")
+    try:
+        # Khởi tạo lại file log
+        with codecs.open(log_file, "w", "utf-8") as file:
+            file.write("")  # Tạo file rỗng
+        print(f"Initialized new log file: {log_file}")
+    except Exception as e:
+        print(f"Error initializing log file: {e}")
+
+# Gọi hàm để kiểm tra và khởi tạo lại file log
+init_log_file()
+
 
 # Function to check if objects exist
 def base_setting(testcase_name, app_name, dic_object_list):
