@@ -1,3 +1,7 @@
-*SETTING 3
--List of pass: Find a setting, Home, System, Bluetooth & devices, Network & internet, Apps, Accounts, Time & language, Gaming, Accessibility, Privacy & security, Windows Update
--List of fail: Personalizations
+*SETTING 32
+-List of pass: Troubleshoot, Other troubleshooters
+-List of fail: Audio Troubleshoot abnormally, Network and Internet Troubleshoot abnormally
+*SETTING 33
+-List of pass: System, Storage, Recovery, Reset this PC, Advanced startup
+*SETTING 38
+-List of pass: System, Storage, About, Device specifications, Windows specifications, Support, Related

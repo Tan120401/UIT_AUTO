@@ -10,6 +10,8 @@ from PyQt6.QtWidgets import QMainWindow, QApplication
 
 from common_lib.common_lib import init_log_file
 from settings.setting_result_display import Ui_MainWindow
+from settings.write_report import write_result_report
+
 
 class Worker(QThread):
     finished = pyqtSignal()  # Signal to indicate the thread is finished
@@ -30,6 +32,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ui.setupUi(self)
         self.init_ui()
         self.threads = {}  # Dictionary to manage threads
+        self.testcase_name_report = []
+        self.testcase_result_report = []
 
     def init_ui(self):
         global tableView, model
@@ -47,7 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # Function click run
     def on_btn_run_clicked(self):
-        self.list_of_testcase = ['setting_3', 'setting_4']
+        self.list_of_testcase = ['setting_32']
         self.current_index = 0
         self.run_next_testcase()
 
@@ -64,6 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print(f"Started init_result thread for testcase {testcase}")
             except Exception as e:
                 print(f'Error click: {e}')
+
     # Function start handle
     def start_handle_result_thread(self):
         testcase = self.list_of_testcase[self.current_index]
@@ -76,11 +81,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print(f"Started handle_result thread for testcase {testcase}")
         except Exception as e:
             print(f'Error handle: {e}')
+
     # Function finish handle result
     def on_thread_finished(self):
         print(f"Thread for testcase {self.list_of_testcase[self.current_index]} finished")
+        print('curren index: ',self.current_index)
         self.current_index += 1
-        self.run_next_testcase()
+        if self.current_index < len(self.list_of_testcase) :
+            print('curren index 2: ', self.current_index)
+            print('list_of_testcase: ', len(self.list_of_testcase))
+            self.run_next_testcase()
 
     # Function init test case result
     def init_result(self, testcase_name, row_index, col_index):
@@ -106,12 +116,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             module = importlib.import_module(module_name)
             testcase_function = getattr(module, testcase_name)
             result = testcase_function()
-            sleep(2)
             print(f'result {testcase_name}: {result}')
+            self.testcase_name_report.append(testcase_name)
             if result:
+                self.testcase_result_report.append('Pass')
                 self.reload_row_data('Pass', row_index, col_index)
             else:
+                self.testcase_result_report.append('Fail')
                 self.reload_row_data('Fail', row_index, col_index)
+            print(self.testcase_name_report, self.testcase_result_report)
+            write_result_report(self.testcase_name_report, self.testcase_result_report)
         except AttributeError:
             print(f'Lỗi xử lý: Hàm {testcase_name} không tồn tại trong module {module_name}.')
         except Exception as e:

@@ -4,7 +4,7 @@ from setting_result_display import Ui_MainWindow
 def setting_3():
     # dictionaries
     dic_of_objects = {
-        'title': 'Find a setting, Home, System, Bluetooth & devices, Network & internet, Personalizations, Apps, Accounts, '
+        'title': 'Find a setting, Home, System, Bluetooth & devices, Network & internet, Personalization, Apps, Accounts, '
                  'Time & language, Gaming, Accessibility, Privacy & security, Windows Update',
         'auto_id': ', , , , , , , , , , , , ',
         'control_type': 'Text, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem, ListItem',

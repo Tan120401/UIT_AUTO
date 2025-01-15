@@ -9,6 +9,7 @@ from pywinauto import Application, Desktop
 
 # The list contain information show on UI
 result_of_testcase = []
+
 # Function to write logs
 def write_log_setting(testcase_name,pass_list, fail_list):
     # Open log file and write
@@ -26,6 +27,7 @@ def write_log_setting(testcase_name,pass_list, fail_list):
             file.write("\n")
         else:
             result_of_testcase.append(f"-{testcase_name}: Pass")
+
 # Function init log file
 def init_log_file():
     log_file = "setting_logs.txt"
@@ -45,10 +47,6 @@ def init_log_file():
         print(f"Initialized new log file: {log_file}")
     except Exception as e:
         print(f"Error initializing log file: {e}")
-
-# Gọi hàm để kiểm tra và khởi tạo lại file log
-init_log_file()
-
 
 # Function to check if objects exist
 def base_setting(testcase_name, app_name, dic_object_list):
@@ -71,6 +69,10 @@ def base_setting(testcase_name, app_name, dic_object_list):
                 object_result = click_object(target_window, title, auto_id, control_type)
             elif object_handle == 'view':
                 object_result = find_object(target_window, title, auto_id, control_type)
+            elif object_handle == 'scroll':
+                scroll_center(target_window, title, auto_id, control_type)
+                object_result = find_object(target_window, title, auto_id, control_type)
+            print(object_result)
             if object_result[0]:
                 pass_list.append(title)
             else:
@@ -79,25 +81,22 @@ def base_setting(testcase_name, app_name, dic_object_list):
         print("Dic object list not match")
 
     write_log_setting(testcase_name, pass_list, fail_list)
-
     # close window
-    # close_app('Settings')
-    #
-    print(len(fail_list))
-    print(len(pass_list))
+    close_app('Settings')
+
     if len(fail_list) > 0:
-        print('test fail')
         return False
     elif len(pass_list) >0:
-        print('test pass')
         return True
+
 # Move to object and scroll
 def scroll_center(target_window, title, auto_id, control_type):
     scroll_bar = target_window.child_window(title=title, auto_id=auto_id, control_type=control_type)
     scroll_bar_rec = scroll_bar.rectangle()
     pyautogui.moveTo(scroll_bar_rec.left + 20, scroll_bar_rec.top - 20)
-    sleep(5)
+    sleep(2)
     pyautogui.scroll(-800)
+    sleep(2)
 
 # Function close app
 def close_app(app_name):
@@ -121,7 +120,7 @@ def click_object(window, title, auto_id, control_type):
         result = [True,title, object_select]
     else:
         result = [False, title, None]
-    sleep(2)
+    sleep(3)
     return result
 
     # try:
@@ -145,7 +144,7 @@ def find_object(window, title, auto_id, control_type):
         result = [False, title, None ]
     else:
         result = [True, title, object_find]
-    sleep(2)
+    # sleep(2)
     return result
 
 # Function click object by coordinates
@@ -196,9 +195,8 @@ def click_object_within_group(group, name, auto_id, control_type):
         print(element.window_text())
         if element.window_text() == name and element.automation_id() == auto_id:
             print(element.window_text())
-            return click_object(element)
+            return element.click_input()
     return False
-
 
 # target_window = _open_app('Settings')
 # object = target_window.child_window(title='Accessibility', auto_id='', control_type='ListItem')
