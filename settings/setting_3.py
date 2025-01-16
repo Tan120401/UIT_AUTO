@@ -1,6 +1,4 @@
-
 from common_lib.common_lib import base_setting
-from setting_result_display import Ui_MainWindow
 def setting_3():
     # dictionaries
     dic_of_objects = {

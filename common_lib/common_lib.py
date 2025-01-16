@@ -120,6 +120,7 @@ def click_object(window, title, auto_id, control_type):
         result = [True,title, object_select]
     else:
         result = [False, title, None]
+    print(window.print_control_identifiers())
     sleep(3)
     return result
 

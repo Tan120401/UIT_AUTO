@@ -1,4 +1,5 @@
 import importlib
+import os
 import sys
 from logging import exception
 from time import sleep
@@ -12,6 +13,8 @@ from common_lib.common_lib import init_log_file
 from settings.setting_result_display import Ui_MainWindow
 from settings.write_report import write_result_report
 
+# Thêm đường dẫn đến common_lib vào hệ thống path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common_lib')))
 
 class Worker(QThread):
     finished = pyqtSignal()  # Signal to indicate the thread is finished
@@ -51,7 +54,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # Function click run
     def on_btn_run_clicked(self):
-        self.list_of_testcase = ['setting_32']
+        self.list_of_testcase = ['setting_3', 'setting_4', 'setting_5', 'setting_12', 'setting_18',
+                                 'setting_18', 'setting_22', 'setting_24', 'setting_31', 'setting_32',
+                                 'setting_33', 'setting_38', 'setting_41', 'setting_42', 'setting_43',
+                                 'setting_53', 'setting_54', 'setting_55', 'setting_57', 'setting_58',
+                                 'setting_63', 'setting_64', 'setting_68', 'setting_69', 'setting_71',
+                                 'setting_72', 'setting_74']
         self.current_index = 0
         self.run_next_testcase()
 

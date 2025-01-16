@@ -12,4 +12,3 @@ def setting_33():
     }
     result = base_setting("Setting 33", "Settings", dic_of_objects)
     return result
-setting_33()
