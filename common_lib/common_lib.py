@@ -72,7 +72,6 @@ def base_setting(testcase_name, app_name, dic_object_list):
             elif object_handle == 'scroll':
                 scroll_center(target_window, title, auto_id, control_type)
                 object_result = find_object(target_window, title, auto_id, control_type)
-            print(object_result)
             if object_result[0]:
                 pass_list.append(title)
             else:
@@ -97,6 +96,7 @@ def scroll_center(target_window, title, auto_id, control_type):
     sleep(2)
     pyautogui.scroll(-800)
     sleep(2)
+    return scroll_bar
 
 # Function close app
 def close_app(app_name):
@@ -120,10 +120,9 @@ def click_object(window, title, auto_id, control_type):
         result = [True,title, object_select]
     else:
         result = [False, title, None]
-    print(window.print_control_identifiers())
     sleep(3)
+    # print(window.print_control_identifiers())
     return result
-
     # try:
     #     object_select = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
     #     if object_select.exists():
@@ -141,6 +140,7 @@ def click_object(window, title, auto_id, control_type):
 # Function find object
 def find_object(window, title, auto_id, control_type):
     object_find = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
+    window.print_control_identifiers()
     if not object_find.exists():
         result = [False, title, None ]
     else:
@@ -190,12 +190,9 @@ def get_connected_wifi():
 def click_object_within_group(group, name, auto_id, control_type):
     # get all element
     child_elements = group.descendants(control_type=control_type)
-    print(child_elements)
     # find elements
     for element in child_elements:
-        print(element.window_text())
         if element.window_text() == name and element.automation_id() == auto_id:
-            print(element.window_text())
             return element.click_input()
     return False
 

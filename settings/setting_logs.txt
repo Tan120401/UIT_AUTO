@@ -1,15 +1,3 @@
-*SETTING 13
--List of pass: 
-*SETTING 13
--List of pass: System, Notifications, Focus
--List of fail: Get notifications from apps and other senders, Do not disturb, Turn on do not disturb automatically, Set priority notifications
-*SETTING 13
--List of pass: System, Notifications, Get notifications from apps and other senders, Do not disturb, Turn on do not disturb automatically
--List of fail: Set priority notifications, Focus
-*SETTING 13
--List of pass: System, Notifications, Get notifications from apps and other senders, Do not disturb, Turn on do not disturb automatically
--List of fail: Set priority notifications, Focus
-*SETTING 13
--List of pass: System, Notifications, Get notifications from apps and other senders, Do not disturb, Turn on do not disturb automatically, Set priority notifications, Focus
-*SETTING 44
--List of pass: Bluetooth & devices, Mobile devices, Allow this PC to access your mobile devices, Phone Link, Instantly access your mobile device from your PC, Show me suggestions for using my mobile device with Windows
+*CONTROL CENTER 7
+-List of pass: Network SRV_Samsung_EV1_Viettel_5
+Internet access, All settings, All setting select

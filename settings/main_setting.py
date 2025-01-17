@@ -54,12 +54,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # Function click run
     def on_btn_run_clicked(self):
-        self.list_of_testcase = ['setting_3', 'setting_4', 'setting_5', 'setting_12', 'setting_18',
-                                 'setting_18', 'setting_22', 'setting_24', 'setting_31', 'setting_32',
-                                 'setting_33', 'setting_38', 'setting_41', 'setting_42', 'setting_43',
-                                 'setting_53', 'setting_54', 'setting_55', 'setting_57', 'setting_58',
-                                 'setting_63', 'setting_64', 'setting_68', 'setting_69', 'setting_71',
-                                 'setting_72', 'setting_74']
+        # self.list_of_testcase = ['setting_3', 'setting_4', 'setting_5', 'setting_12', 'setting_13', 'setting_18',
+        #                          'setting_18', 'setting_22', 'setting_24', 'setting_31', 'setting_32',
+        #                          'setting_33', 'setting_38', 'setting_41', 'setting_42', 'setting_43',
+        #                          'setting_53', 'setting_54', 'setting_55', 'setting_57', 'setting_58',
+        #                          'setting_60','setting_62','setting_63', 'setting_64', 'setting_67', 'setting_68'
+        #                          'setting_69','setting_70','setting_71','setting_72', 'setting_74']
+        self.list_of_testcase = ['control_center_6']
         self.current_index = 0
         self.run_next_testcase()
 
