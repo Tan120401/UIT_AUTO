@@ -1,5 +1,6 @@
 import codecs
 import os
+import time
 from time import sleep
 import subprocess
 
@@ -8,25 +9,26 @@ from AppOpener import open
 from pywinauto import Application, Desktop
 
 # The list contain information show on UI
-result_of_testcase = []
 
 # Function to write logs
 def write_log_setting(testcase_name,pass_list, fail_list):
     # Open log file and write
-    with codecs.open("setting_logs.txt", "a", "utf-8") as file:
-        file.write(f"*{testcase_name.upper()}\n")
-        file.write("-List of pass: ")
-        file.write(", ".join(pass_list))
-        file.write("\n")
-        if len(fail_list) > 0:
-            result_of_testcase.append(f"-{testcase_name}: Fail")
-            file.write("-List of fail: ")
-            file.write(", ".join(fail_list))
-            # for fail_ob in fail_list:
-            #    file.write(f"{fail_ob}, ")
+    try:
+        result_of_testcase = []
+        with codecs.open("setting_logs.txt", "a", "utf-8") as file:
+            file.write(f"*{testcase_name.upper()}\n")
+            file.write("-List of pass: ")
+            file.write(", ".join(pass_list))
             file.write("\n")
-        else:
-            result_of_testcase.append(f"-{testcase_name}: Pass")
+            if len(fail_list) > 0:
+                result_of_testcase.append(f"-{testcase_name}: Fail")
+                file.write("-List of fail: ")
+                file.write(", ".join(fail_list))
+                file.write("\n")
+            else:
+                result_of_testcase.append(f"-{testcase_name}: Pass")
+    except Exception as e:
+        print(f'Write log error: {e}')
 
 # Function init log file
 def init_log_file():
@@ -50,103 +52,111 @@ def init_log_file():
 
 # Function to check if objects exist
 def base_setting(testcase_name, app_name, dic_object_list):
-    # Open app settings
-    target_window = open_app(f"{app_name}")
-    # Change title, control type, auto_id, object_handle to List
-    titles = dic_object_list['title'].split(', ')
-    control_types = dic_object_list['control_type'].split(', ')
-    auto_ids = dic_object_list['auto_id'].split(', ')
-    object_handles = dic_object_list['object_handle'].split(', ')
+    try:
+        # Open app settings
+        target_window = open_app(f"{app_name}")
+        # Change title, control type, auto_id, object_handle to List
+        titles = dic_object_list['title'].split(', ')
+        control_types = dic_object_list['control_type'].split(', ')
+        auto_ids = dic_object_list['auto_id'].split(', ')
+        object_handles = dic_object_list['object_handle'].split(', ')
 
-    # The List contains the pass fail objects
-    pass_list = []
-    fail_list = []
-    # Check that the lengths of the lists match
-    if len(titles) == len(control_types) == len(auto_ids) == len(object_handles):
-        for title, auto_id, control_type, object_handle in zip(titles, auto_ids, control_types, object_handles):
-            object_result =[]
-            if object_handle == 'click':
-                object_result = click_object(target_window, title, auto_id, control_type)
-            elif object_handle == 'view':
-                object_result = find_object(target_window, title, auto_id, control_type)
-            elif object_handle == 'scroll':
-                scroll_center(target_window, title, auto_id, control_type)
-                object_result = find_object(target_window, title, auto_id, control_type)
-            if object_result[0]:
-                pass_list.append(title)
-            else:
-                fail_list.append(title)
-    else:
-        print("Dic object list not match")
+        # The List contains the pass fail objects
+        pass_list = []
+        fail_list = []
+        # Check that the lengths of the lists match
+        if len(titles) == len(control_types) == len(auto_ids) == len(object_handles):
+            for title, auto_id, control_type, object_handle in zip(titles, auto_ids, control_types, object_handles):
+                object_result =[]
+                if object_handle == 'click':
+                    object_result = click_object(target_window, title, auto_id, control_type)
+                elif object_handle == 'view':
+                    object_result = find_object(target_window, title, auto_id, control_type)
+                elif object_handle == 'scroll':
+                    scroll_center(target_window, title, auto_id, control_type)
+                    object_result = find_object(target_window, title, auto_id, control_type)
+                if object_result[0]:
+                    pass_list.append(title)
+                else:
+                    fail_list.append(title)
+        else:
+            print("Dic object list not match")
 
-    write_log_setting(testcase_name, pass_list, fail_list)
-    # close window
-    close_app('Settings')
+        write_log_setting(testcase_name, pass_list, fail_list)
+        # close window
+        close_app('Settings')
 
-    if len(fail_list) > 0:
-        return False
-    elif len(pass_list) >0:
-        return True
+        if len(fail_list) > 0:
+            return False
+        elif len(pass_list) >0:
+            return True
+    except Exception as e:
+        print(f'Base setting error: {e}')
 
 # Move to object and scroll
 def scroll_center(target_window, title, auto_id, control_type):
-    scroll_bar = target_window.child_window(title=title, auto_id=auto_id, control_type=control_type)
-    scroll_bar_rec = scroll_bar.rectangle()
-    pyautogui.moveTo(scroll_bar_rec.left + 20, scroll_bar_rec.top - 20)
-    sleep(2)
-    pyautogui.scroll(-800)
-    sleep(2)
-    return scroll_bar
+    try:
+        scroll_bar = target_window.child_window(title=title, auto_id=auto_id, control_type=control_type)
+        scroll_bar_rec = scroll_bar.rectangle()
+        pyautogui.moveTo(scroll_bar_rec.left + 20, scroll_bar_rec.top - 20)
+        sleep(1)
+        pyautogui.scroll(-800)
+        sleep(1)
+        return scroll_bar
+    except Exception as e:
+        print(f'Scroll error: {e}')
 
 # Function close app
 def close_app(app_name):
-    app = Application(backend='uia').connect(title_re=app_name)
-    target_window = app.window(title_re=app_name)
-    target_window.close()
+    try:
+        app = Application(backend='uia').connect(title_re=app_name)
+        target_window = app.window(title_re=app_name)
+        target_window.close()
+    except Exception as e:
+        print(f'close app error: {e}')
 
 # Function open app return target windows
 def open_app(app_name):
-    open(app_name, match_closest=False)
-    sleep(5)
-    app = Application(backend='uia').connect(title_re=app_name)
-    target_window = app.window(title_re=app_name)
-    return target_window
+    try:
+        open(app_name, match_closest=False)
+        sleep(3)
+        app = Application(backend='uia').connect(title_re=app_name)
+        target_window = app.window(title_re=app_name)
+        return target_window
+    except Exception as e:
+        print(f'open app error: {e}')
+
+def wait_until(timeout, interval, condition):
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        if condition():
+            return True
+        time.sleep(interval)
+    raise TimeoutError("Time out error")
 
 # Function click object exist
 def click_object(window, title, auto_id, control_type):
     object_select = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
-    if object_select.exists():
+    try:
+        wait_until(5, 0.5, lambda: object_select.exists())
         object_select.click_input()
-        result = [True,title, object_select]
-    else:
+        result = [True, title, object_select]
+    except TimeoutError as e:
+        print(f'error: {e}')
         result = [False, title, None]
-    sleep(3)
-    # print(window.print_control_identifiers())
     return result
-    # try:
-    #     object_select = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
-    #     if object_select.exists():
-    #         object_select.click_input()
-    #         logging.info(f"Clicked on the object: {title}")
-    #     else:
-    #         logging.warning(f"Object not found: {title}")
-    #         object_select = title
-    # except Exception as e:
-    #     logging.error(f"An error occurred: {e}")
-    #     object_select = None
-    # sleep(2)
-    # return object_select
 
 # Function find object
 def find_object(window, title, auto_id, control_type):
-    object_find = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
-    window.print_control_identifiers()
-    if not object_find.exists():
-        result = [False, title, None ]
-    else:
-        result = [True, title, object_find]
-    # sleep(2)
-    return result
+    try:
+        object_find = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
+        if not object_find.exists():
+            result = [False, title, None ]
+        else:
+            result = [True, title, object_find]
+        return result
+    except Exception as e:
+        print(f'Find Object error: {e}')
 
 # Function click object by coordinates
 def click_object_by_coordinates(left, top, right, bottom):
@@ -164,14 +174,17 @@ def click_object_by_coordinates(left, top, right, bottom):
 # Function to find open windows
 def find_open_window(app):
     # List all window
-    all_window_active = Desktop(backend='uia').windows()
-    is_app = False
-    for win in all_window_active:
-        if win.window_text() == app:
-           is_app = True
-           sleep(2)
-           win.close()
-    return is_app
+    try:
+        all_window_active = Desktop(backend='uia').windows()
+        is_app = False
+        for win in all_window_active:
+            if win.window_text() == app:
+               is_app = True
+               sleep(2)
+               win.close()
+        return is_app
+    except Exception as e:
+        print(f'Find app is open error: {e}')
 
 # Function connected Wi-Fi
 def get_connected_wifi():
@@ -195,7 +208,3 @@ def click_object_within_group(group, name, auto_id, control_type):
         if element.window_text() == name and element.automation_id() == auto_id:
             return element.click_input()
     return False
-
-# target_window = _open_app('Settings')
-# object = target_window.child_window(title='Accessibility', auto_id='', control_type='ListItem')
-# object.click_input()
