@@ -5,7 +5,7 @@ def setting_5():
     dic_of_objects = {
         'title': 'System, Display, Brightness & color, Scale & layout, Related settings',
         'auto_id': ", , , , ",
-        'control_type': 'ListItem, Group, Text, Text, Text',
+        'control_type': 'ListItem, Text, Text, Text, Text',
         'object_handle': 'click, click, view, view, view'
     }
     result = base_setting("Setting 5", "Settings", dic_of_objects)

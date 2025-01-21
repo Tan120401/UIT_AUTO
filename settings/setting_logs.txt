@@ -1,16 +1,2 @@
-*CONTROL CENTER 6
--List of pass: Network SRV_Samsung_EV1_Viettel_5
-Internet access, Manage Wi-Fi connections, AP items can be connected are show
-*CONTROL CENTER 7
--List of pass: Network SRV_Samsung_EV1_Viettel_5
-Internet access, All settings, Setting app is open
-*CONTROL CENTER 12
--List of pass: Network SRV_Samsung_EV1_Viettel_5
-Internet access, Project, Project, Project mode normally
-*CONTROL CENTER 16
--List of pass: Nearby share ON normally, Nearby share OFF normally
-*CONTROL CENTER 21
--List of pass: Bluetooth OFF normally, Bluetooth ON normally
-*CONTROL CENTER 8
--List of pass: Network SRV_Samsung_EV1_Viettel_5
-Internet access, Wi-Fi, Bluetooth, Airplane mode, Air plane default OFF, Wi-Fi and Bluetooth ON, Air plane default ON, Wi-Fi and Bluetooth OFF
+*SETTING 3
+-List of pass: Find a setting, Home, System, Bluetooth & devices, Network & internet, Personalization, Apps, Accounts, Time & language, Gaming, Accessibility, Privacy & security, Windows Update

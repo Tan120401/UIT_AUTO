@@ -3,10 +3,10 @@
 
 a = Analysis(
     ['settings\\main_setting.py'],
-    pathex=[],
+    pathex=['./common_lib'],
     binaries=[],
-    datas=[('common_lib', 'common_lib'), ('settings', 'settings')],
-    hiddenimports=['pyautogui', 'AppOpener', 'pywinauto', 'pandas'],
+    datas=[],
+    hiddenimports=['common_lib.common_lib'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

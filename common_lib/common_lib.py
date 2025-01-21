@@ -138,25 +138,26 @@ def wait_until(timeout, interval, condition):
 def click_object(window, title, auto_id, control_type):
     object_select = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
     try:
-        wait_until(5, 0.5, lambda: object_select.exists())
+        wait_until(5, 1, lambda: object_select.exists())
         object_select.click_input()
         result = [True, title, object_select]
+        print(window.print_control_identifiers())
     except TimeoutError as e:
-        print(f'error: {e}')
+        print(f'Click error: {e}')
         result = [False, title, None]
+    sleep(1)
     return result
 
 # Function find object
 def find_object(window, title, auto_id, control_type):
+    object_find = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
     try:
-        object_find = window.child_window(title=title, auto_id=auto_id, control_type=control_type)
-        if not object_find.exists():
-            result = [False, title, None ]
-        else:
-            result = [True, title, object_find]
-        return result
+        wait_until(5, 0.5, lambda: object_find.exists())
+        result = [True, title, object_find]
     except Exception as e:
         print(f'Find Object error: {e}')
+        result = [False, title, None]
+    return result
 
 # Function click object by coordinates
 def click_object_by_coordinates(left, top, right, bottom):

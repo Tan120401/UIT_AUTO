@@ -63,7 +63,7 @@ def setting_24():
         if is_storage_sense_state == 1:
             is_storage_sense = click_object(target_window, 'Storage Sense', '', 'Group')
         else:
-            is_storage_sense_toggle.click_input()
+            is_storage_sense_toggle[2].click_input()
             is_storage_sense = click_object(target_window, 'Storage Sense', '', 'Group')
 
         # Scroll
@@ -88,4 +88,4 @@ def setting_24():
         return False
     elif len(pass_list) > 0:
         return True
-
+setting_24()

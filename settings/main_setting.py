@@ -1,9 +1,6 @@
 import importlib
 import os
 import sys
-from logging import exception
-from time import sleep
-from traceback import print_tb
 
 from PyQt6 import QtGui
 from PyQt6.QtCore import QThread, pyqtSignal
@@ -22,11 +19,16 @@ class Worker(QThread):
     def __init__(self, target=None):
         super().__init__()
         self.target = target
+        # Flag to control thread
+        self._is_running = True
 
     def run(self):
         if self.target:
             self.target()
         self.finished.emit()  # Emit the signal when the work is done
+
+    def stop(self):
+        self._is_running = False
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -34,7 +36,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.init_ui()
-        self.threads = {}  # Dictionary to manage threads
+        # Dictionary to manage threads
+        self.threads = []
         self.testcase_name_report = []
         self.testcase_result_report = []
 
@@ -44,6 +47,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Init table
         tableView = self.ui.tableResult
         self.ui.runBtn.clicked.connect(self.on_btn_run_clicked)
+        self.ui.stopBtn.clicked.connect(self.on_btn_stop_clicked)
+        self.ui.exitBtn.clicked.connect(self.on_btn_exit_clicked)
+        self.ui.openlogBtn.clicked.connect(self.open_log_folder)
+        self.ui.stopBtn.setEnabled(False)
 
         num_col = 2
         model = QtGui.QStandardItemModel(0, num_col)
@@ -52,15 +59,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         header.setDefaultSectionSize(278)
         tableView.setModel(model)
 
+    # Function clear table data
+    def clear_table_data(self):
+        global model
+        model.removeRows(0, model.rowCount())
+
     # Function click run
     def on_btn_run_clicked(self):
-        # self.list_of_testcase = ['setting_3', 'setting_4', 'setting_5', 'setting_12', 'setting_13', 'setting_18',
-        #                          'setting_18', 'setting_22', 'setting_24', 'setting_31', 'setting_32',
-        #                          'setting_33', 'setting_38', 'setting_41', 'setting_42', 'setting_43', 'setting_44',
-        #                          'setting_53', 'setting_54', 'setting_55', 'setting_57', 'setting_58',
-        #                          'setting_60','setting_62','setting_63', 'setting_64', 'setting_67', 'setting_68'
-        #                          'setting_69','setting_70','setting_71','setting_72', 'setting_74']
-        self.list_of_testcase = ['control_center_6', 'control_center_7', 'control_center_12', 'control_center_16', 'control_center_21', 'control_center_8']
+        self.clear_table_data()
+        self.ui.runBtn.setEnabled(False)
+        self.ui.stopBtn.setEnabled(True)
+        self.ui.openlogBtn.setEnabled(False)
+        self.list_of_testcase = ['setting_3', 'setting_4', 'setting_5', 'setting_12', 'setting_13', 'setting_18',
+                                 'setting_18', 'setting_22', 'setting_24', 'setting_31', 'setting_32',
+                                 'setting_33', 'setting_38', 'setting_41', 'setting_42', 'setting_43', 'setting_44',
+                                 'setting_53', 'setting_54', 'setting_55', 'setting_57', 'setting_58',
+                                 'setting_60','setting_62','setting_63', 'setting_64', 'setting_67', 'setting_68',
+                                 'setting_69','setting_70','setting_71','setting_72', 'setting_74',
+                                 'control_center_6', 'control_center_7', 'control_center_12', 'control_center_16', 'control_center_21', 'control_center_8']
+        # self.list_of_testcase = ['control_center_6', 'control_center_7', 'control_center_12', 'control_center_16', 'control_center_21', 'control_center_8']
         self.current_index = 0
         self.run_next_testcase()
 
@@ -70,23 +87,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             testcase = self.list_of_testcase[self.current_index]
             try:
                 # Run thread init test case in table
-                self.threads[self.current_index] = Worker(target=lambda: self.init_result(testcase, self.current_index, self.current_index))
+                thread = Worker(target=lambda: self.init_result(testcase, self.current_index, self.current_index))
+                self.threads.append(thread)
                 # Run thread handle
-                self.threads[self.current_index].finished.connect(self.start_handle_result_thread)
-                self.threads[self.current_index].start()
+                thread.finished.connect(self.start_handle_result_thread)
+                thread.start()
                 print(f"Started init_result thread for testcase {testcase}")
             except Exception as e:
                 print(f'Error click: {e}')
 
     # Function start handle
     def start_handle_result_thread(self):
+        if self.current_index >= len(self.threads) or not self.threads[self.current_index]._is_running:
+            return
         testcase = self.list_of_testcase[self.current_index]
         try:
             # run thread handle_result
-            self.threads[self.current_index + 1] = Worker(target=lambda: self.handle_result(testcase, self.current_index, self.current_index))
-
-            self.threads[self.current_index + 1].finished.connect(self.on_thread_finished)
-            self.threads[self.current_index + 1].start()
+            thread = Worker(target=lambda: self.handle_result(testcase, self.current_index, self.current_index))
+            self.threads.append(thread)
+            thread.finished.connect(self.on_thread_finished)
+            thread.start()
             print(f"Started handle_result thread for testcase {testcase}")
         except Exception as e:
             print(f'Error handle: {e}')
@@ -97,9 +117,42 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print('curren index: ',self.current_index)
         self.current_index += 1
         if self.current_index < len(self.list_of_testcase) :
-            print('curren index 2: ', self.current_index)
-            print('list_of_testcase: ', len(self.list_of_testcase))
             self.run_next_testcase()
+        else:
+            self.ui.runBtn.setEnabled(True)
+            self.ui.stopBtn.setEnabled(False)
+
+    # Function stop all threads
+    def stop_all_threads(self):
+        for thread in self.threads:
+            thread.stop()
+        self.threads.clear()
+
+    # Function stop click
+    def on_btn_stop_clicked(self):
+        self.stop_all_threads()
+        self.ui.runBtn.setEnabled(True)
+        self.ui.stopBtn.setEnabled(False)
+
+    # Function exit
+    def on_btn_exit_clicked(self):
+        print("Chương trình đã dừng lại.")
+        sys.exit()
+
+    # Function open log folder
+    def open_log_folder(self):
+        path_file = r'C:\UIT_Auto\settings'
+        try:
+            if hasattr(sys, 'frozen'):
+                path_file = os.path.dirname(sys.executable)
+            else:
+                # Đường dẫn của thư mục chứa file script đang chạy
+                path_file = os.path.dirname(os.path.abspath(__file__))
+
+            os.startfile(path_file)
+            print(path_file)
+        except Exception as e:
+            print(f'Open log file error: {e}')
 
     # Function init test case result
     def init_result(self, testcase_name, row_index, col_index):
@@ -146,3 +199,7 @@ if __name__ == "__main__":
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec())
+
+# pyinstaller --onefile --paths=.\common_lib\common_lib --hidden-import=common_lib .\settings\main_setting.py
+# pyinstaller --onefile --paths=common_lib --hidden-import=common_lib .\setting\main_setting.py
+

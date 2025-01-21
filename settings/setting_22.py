@@ -16,7 +16,7 @@ def setting_22():
     dic_of_objects = {
         'title': f'System, Storage, ‎Local Disk (C:) - {total} GB, Storage management',
         'auto_id': ", , SystemSettings_StorageSense_Breakdown_TitleTextBlock, ",
-        'control_type': 'ListItem, Group, Text, Text',
+        'control_type': 'ListItem, Text, Text, Text',
         'object_handle': 'click, click, click, view'
     }
     result = base_setting("Setting 22", "Settings", dic_of_objects)
